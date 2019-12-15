@@ -53,16 +53,21 @@ ISR(TIMER1_OVF_vect){
   Serial.print("Buffer: ");
   Serial.println(buff);
   //Pasaje de buffer a bloque del cifrador
-  for(int i = 0; i<buff.length();i++){
-    block.plaintext[i] = buff[i];    
+  for(int i = 0; i<sizeof(block.plaintext);i++){
+    if(i<buff.length()){
+      block.plaintext[i] = buff[i];
+    }
+    else{
+      block.plaintext[i] = 0;
+    }
   }
   
 // Codificacion
   Serial.print("Codificacion de: ");
   for(int i = 0; i<sizeof(block.plaintext);i++){
-    Serial.print(block.plaintext[i]);
+    Serial.print(block.plaintext[i],HEX);
   }
-  Serial.println();
+  Serial.println(",HEX");
 
   cifrador.setKey(block.key, sizeof(block.key));
   cifrador.encryptBlock(block.ciphertext, block.plaintext);
@@ -71,7 +76,7 @@ ISR(TIMER1_OVF_vect){
   for(int i = 0; i<sizeof(block.ciphertext);i++){
     Serial.print(block.ciphertext[i],HEX);
   }
-  Serial.println();
+  Serial.println(",HEX");
 
 // Decodificacion
   Serial.print("Decodificion: ");
@@ -80,7 +85,7 @@ ISR(TIMER1_OVF_vect){
   for(int i = 0; i<sizeof(block.plaintext);i++){
     Serial.print(block.plaintext[i],HEX);
   }
-  Serial.println();
+  Serial.println(",HEX");
   Serial.println();
   Serial.println();
   Serial.println();
